@@ -7,9 +7,34 @@
     <title>Document</title>
   </head>
   <body>
-    <form method="POST" enctype="multipart/form-data">
-      <input type="file" name="file" />
+    <form action="" method="POST" enctype="multipart/form-data" class="form">
+      <input type="file" name="file" required />
       <button type="submit">Enviar</button>
     </form>
+    <span class="message"></span>
   </body>
+  <script>
+    const form = document.querySelector(".form");
+    const span = document.querySelector(".message");
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const input = document.querySelector("input[type=file]");
+
+      const formdata = new FormData();
+      formdata.append("file", input.files[0]);
+
+      fetch("http://127.0.0.1:5000/upload", {
+        method: "POST",
+        body: formdata,
+      })
+        .then((resp) => resp.json())
+        .then((data) => {
+          console.log(data);
+          span.textContent = data.message;
+        })
+        .catch((error) => console.error(error));
+    });
+  </script>
 </html>
