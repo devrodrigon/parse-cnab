@@ -1,4 +1,13 @@
 services:
+  web:
+    container_name: web_cnab
+    image: httpd:2.4.55-alpine
+    ports:
+      - 8080:80
+    volumes:
+      - ./index.html:/usr/local/apache2/htdocs/index.html
+    depends_on:
+      - flask
   flask:
     container_name: flask-app
     build: .
