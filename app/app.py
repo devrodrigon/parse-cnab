@@ -9,6 +9,12 @@ dotenv.load_dotenv()
 
 app = Flask(__name__)
 
+conn = psycopg2.connect(database=os.getenv("POSTGRES_DB"),
+                            host=os.getenv("HOST"),
+                            user=os.getenv("POSTGRES_USER"),
+                            password=os.getenv("POSTGRES_PASSWORD"),
+                            port=os.getenv("PORT"))
+
 @app.post('/upload')
 @cross_origin()
 def save_file():
@@ -47,11 +53,4 @@ def save_file():
         abort(make_response({"message":"Ops, algo deu errado!!"}, 400))
 
 if __name__ == "__main__":
-
-    conn = psycopg2.connect(database=os.getenv("POSTGRES_DB"),
-                            host=os.getenv("HOST"),
-                            user=os.getenv("POSTGRES_USER"),
-                            password=os.getenv("POSTGRES_PASSWORD"),
-                            port=os.getenv("PORT"))
-
     app.run(debug=True, port=5000, host="0.0.0.0")

@@ -71,9 +71,18 @@ cat .env.example > .env
 # Informe os dados no arquivo .env
 
 # Execute a aplicação
-python app.py
+python app/app.py
 
 # O servidor iniciará na porta: 5000
 
 # Abra o arquivo index.html em um navegador e faça o upload do arquivo cnab.txt
+```
+
+## Rodar os testes
+
+```bash
+# Execute os passos de cima(não precisa executar a aplicação)
+
+# Rode os tests
+pytest -v
 ```
