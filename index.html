@@ -5,13 +5,66 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #001f36;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .form {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      label {
+        padding: 20px 10px;
+        width: 200px;
+        background-color: #1c5560;
+        color: #fff;
+        text-transform: uppercase;
+        text-align: center;
+        margin-top: 10px;
+        cursor: pointer;
+      }
+
+      button[type="submit"] {
+        padding: 20px 10px;
+        width: 200px;
+        background-color: #1c5560;
+        border: none;
+
+        cursor: pointer;
+      }
+
+      .message {
+        color: #00b34c;
+        font-size: 18px;
+      }
+    </style>
   </head>
   <body>
-    <form action="" method="POST" enctype="multipart/form-data" class="form">
-      <input type="file" name="file" required />
-      <button type="submit">Enviar</button>
-    </form>
-    <span class="message"></span>
+    <div>
+      <form action="" method="POST" enctype="multipart/form-data" class="form">
+        <label for="file">Escolher arquivo</label>
+        <input id="file" type="file" name="file" required />
+        <button type="submit">Enviar</button>
+      </form>
+      <span class="message"></span>
+    </div>
   </body>
   <script>
     const form = document.querySelector(".form");
@@ -34,7 +87,11 @@
           console.log(data);
           span.textContent = data.message;
         })
-        .catch((error) => console.error(error));
+        .catch((error) => {
+          console.log(error);
+          span.textContent = "Ops, algo deu errado!";
+          span.style.color = "red";
+        });
     });
   </script>
 </html>
