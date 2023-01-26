@@ -34,5 +34,46 @@ docker compose up
 
 # O servidor web iniciará na porta: 8080 - acesse <http://localhost:8080>
 
-# faça o upload do arquivo
+# faça o upload do arquivo cnab.txt
+```
+
+## Executar projeto sem docker
+
+```bash
+# Fazer o clone do projeto
+git clone git@github.com:devrodrigon/parse-cnab.git
+
+# Acesse a pasta do projeto
+cd parse-cnab
+
+# Criar um ambiente virtual
+python -m venv venv
+
+# Ative seu venv
+# No linux
+source venv/bin/activate
+
+# No windows
+.\venv\Scripts\activate
+
+# Rode as dependencias
+pip install -r requirements.txt
+
+# Crie um banco de dados postgres pelo terminal
+psql -U <seu_nome_de_usuario> -c "create database cnab;"
+
+# Crie as tabelas usando o arquivo db.sql
+psql -U <seu_nome_de_usuario> -d cnab -f db.sql
+
+# Faça uma copia do arquivo .env.example e renomei para .env
+cat .env.example > .env
+
+# Informe os dados no arquivo .env
+
+# Execute a aplicação
+python app.py
+
+# O servidor iniciará na porta: 5000
+
+# Abra o arquivo index.html em um navegador e faça o upload do arquivo cnab.txt
 ```
