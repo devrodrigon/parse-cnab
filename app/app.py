@@ -1,56 +1,40 @@
-import os
-import dotenv
-import psycopg2
-from datetime import datetime
-from flask import Flask, request, make_response, abort
-from flask_cors import cross_origin
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
-dotenv.load_dotenv()
+db = SQLAlchemy()
 
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///parse-cnab.sqlite3"
+    db.init_app(app)
 
-conn = psycopg2.connect(database=os.getenv("POSTGRES_DB"),
-                            host=os.getenv("HOST"),
-                            user=os.getenv("POSTGRES_USER"),
-                            password=os.getenv("POSTGRES_PASSWORD"),
-                            port=os.getenv("PORT"))
+    from .models import Tipo, Transacao
 
-@app.post('/upload')
-@cross_origin()
-def save_file():
-    try:
+    @app.cli.command("create_tables")
+    def create_tables():
+        with app.app_context():
+            db.create_all()
+            debito = Tipo(descricao="Débito", natureza="Entrada", sinal="+")
+            db.session.add(debito)
+            boleto = Tipo(descricao="Boleto", natureza="Saída", sinal="-")
+            db.session.add(boleto)
+            financiamento = Tipo(descricao="Financiamento", natureza="Saída", sinal="-")
+            db.session.add(financiamento)
+            credito = Tipo(descricao="Credito", natureza="Entrada", sinal="+")
+            db.session.add(credito)
+            emprestimo = Tipo(descricao="Recebimento de Empréstimo", natureza="Entrada", sinal="+")
+            db.session.add(emprestimo)
+            vendas = Tipo(descricao="Vendas", natureza="Entrada", sinal="+")
+            db.session.add(vendas)
+            ted = Tipo(descricao="Recebimento TED", natureza="Entrada", sinal="+")
+            db.session.add(ted)
+            doc = Tipo(descricao="Recebimento DOC", natureza="Entrada", sinal="+")
+            db.session.add(doc)
+            aluguel = Tipo(descricao="Aluguel", natureza="Saída", sinal="-")
+            db.session.add(aluguel)
+            db.session.commit()
 
-        file = request.files.get("file")
-        filename = file.filename
+    from .views import api
+    app.register_blueprint(api)
 
-        if not os.path.isdir("uploads"):
-            os.mkdir("uploads")
-
-        file.save(os.path.join(f"uploads/{filename}"))
-
-        with open(f"uploads/{filename}",'r') as f:
-            transicoes = []
-
-            for row in f:
-                tipo = int(row[0:1])
-                data = datetime.strptime(row[1:9],"%Y%m%d").strftime("%Y-%m-%d")
-                valor = int(row[9:19])/100
-                cpf = row[19:30]
-                cartao = row[30:42]
-                hora = row[42:48]
-                dono_da_loja = row[48:62]
-                nome_loja = row[62::]
-
-                transicoes.append((tipo,data,valor,cpf,cartao,hora,dono_da_loja,nome_loja))
-
-            with conn.cursor() as curs:
-                curs.executemany("INSERT INTO transacao(tipo_id,data,valor,cpf,cartao,hora,dono_da_loja,nome_loja) VALUES (%s, %s, %s, %s, %s,%s, %s, %s)", transicoes)
-                conn.commit()
-        
-        return make_response({"message":"Sucesso!!"}, 200)
-
-    except Exception:
-        abort(make_response({"message":"Ops, algo deu errado!!"}, 400))
-
-if __name__ == "__main__":
-    app.run(debug=True, port=5000, host="0.0.0.0")
+    return app
