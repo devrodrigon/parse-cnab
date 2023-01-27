@@ -32,6 +32,8 @@ docker compose up
 
 # O servidor da api iniciará na porta: 5000
 
+# O banco de dados iniciará na porta: 5435
+
 # O servidor web iniciará na porta: 8080 - acesse <http://localhost:8080>
 
 # faça o upload do arquivo cnab.txt
@@ -62,16 +64,16 @@ pip install -r requirements.txt
 # Crie um banco de dados postgres pelo terminal
 psql -U <seu_nome_de_usuario> -c "create database cnab;"
 
-# Crie as tabelas usando o arquivo db.sql
-psql -U <seu_nome_de_usuario> -d cnab -f db.sql
-
 # Faça uma copia do arquivo .env.example e renomei para .env
 cat .env.example > .env
 
 # Informe os dados no arquivo .env
 
+# Execute as tabelas
+flask create_tables
+
 # Execute a aplicação
-python app/app.py
+flask run
 
 # O servidor iniciará na porta: 5000
 
