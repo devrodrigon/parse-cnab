@@ -19,6 +19,7 @@ services:
       - POSTGRES_DB=cnab
       - HOST=db
       - PORT=5432
+    command: bash -c "flask create_tables && flask run --host 0.0.0.0"
     depends_on:
       db:
         condition: service_healthy
@@ -36,5 +37,3 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    volumes:
-      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
