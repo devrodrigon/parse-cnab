@@ -1,13 +1,10 @@
 import os
-import dotenv
-import psycopg2
 from flask import Blueprint, request, make_response, abort
 from datetime import datetime
 from flask_cors import cross_origin
 from .models import Tipo, Transacao
 from .app import db
 
-dotenv.load_dotenv()
 
 api = Blueprint("api", __name__)
 
@@ -27,12 +24,10 @@ def save_file():
         with open(f"uploads/{filename}", "r") as f:
             for row in f:
                 tipo = int(row[0:1])
-                data = datetime.strptime(row[1:9], "%Y%m%d").strftime("%Y-%m-%d")
                 data_python = datetime.strptime(row[1:9], "%Y%m%d").date()
                 valor = int(row[9:19]) / 100
                 cpf = row[19:30]
                 cartao = row[30:42]
-                hora = row[42:48]
                 hora_python = datetime.strptime(row[42:48], "%H%M%S").time()
                 dono_da_loja = row[48:62]
                 nome_loja = row[62::]

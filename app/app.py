@@ -1,11 +1,24 @@
+import dotenv
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+dotenv.load_dotenv()
+
+user = os.getenv("POSTGRES_USER")
+pwd = os.getenv("POSTGRES_PASSWORD")
+database = os.getenv("POSTGRES_DB")
+host = os.getenv("HOST")
+port = os.getenv("PORT")
+
 db = SQLAlchemy()
+
 
 def create_app():
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///parse-cnab.sqlite3"
+    app.config[
+        "SQLALCHEMY_DATABASE_URI"
+    ] = f"postgresql://{user}:{pwd}@{host}:{port}/{database}"
     db.init_app(app)
 
     from .models import Tipo, Transacao
@@ -22,7 +35,9 @@ def create_app():
             db.session.add(financiamento)
             credito = Tipo(descricao="Credito", natureza="Entrada", sinal="+")
             db.session.add(credito)
-            emprestimo = Tipo(descricao="Recebimento de Empréstimo", natureza="Entrada", sinal="+")
+            emprestimo = Tipo(
+                descricao="Recebimento de Empréstimo", natureza="Entrada", sinal="+"
+            )
             db.session.add(emprestimo)
             vendas = Tipo(descricao="Vendas", natureza="Entrada", sinal="+")
             db.session.add(vendas)
@@ -35,6 +50,7 @@ def create_app():
             db.session.commit()
 
     from .views import api
+
     app.register_blueprint(api)
 
     return app
