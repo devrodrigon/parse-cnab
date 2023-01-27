@@ -16,6 +16,4 @@ ENV FLASK_DEBUG=1
 
 ENV FLASK_APP=app/app.py
 
-RUN flask create_tables
-
 CMD ["flask","run","--host","0.0.0.0"]
